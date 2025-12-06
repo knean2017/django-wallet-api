@@ -1,0 +1,24 @@
+TEST TASK: "Transactional System Core"
+
+Execution time: 2–3 hours. Stack: Python, Django, DRF, Celery (Redis), PostgreSQL.
+ 
+Legend
+We are writing internal processing for bonuses and transfers between employees. Your task is to implement a fault-tolerant transaction core.
+
+Task 1: Transaction API 
+Implement the Wallet (Wallet) and Transaction (Transaction) models. Create an endpoint POST /api/transfer, which transfers currency from wallet A to wallet B.
+Conditions with an asterisk:
+Race Condition Check: Imagine that this endpoint receives 100 requests per second from one user with the goal of debiting the balance in the minus. Implement protection against Double Spending (double spending). Hint: Just if balance > amount is not enough.
+System commission: If the transfer amount > 1000 u., the system takes a commission of 10%. The commission should be credited to a special technical wallet admin. All three operations (deduction, credit, commission) must proceed atomically (either all or nothing).
+ 
+Task 2: Asynchrony 
+After a successful transaction, you need to send a "notification" to the recipient (in reality, this is Telegram, but we will simplify it).
+Create a task in Celery.
+Inside the task, make a simulation of a long request (time.sleep(5)).
+Important: If "sending" failed (simulation error), the task should automatically restart (Retry) after 3 seconds, but no more than 3 times.
+ 
+Task 3: Video protection (Screencast)
+Record a short video (3-5 minutes) with screen and voice. What needs to be said in the video:
+Show the transaction code and explain how exactly you protected against Race Condition (why used transaction.atomic, select_for_update or optimistic locking).
+Run a script (or curl), which makes 10 concurrent requests to debiting, and show that the balance did not go into the minus.
+
